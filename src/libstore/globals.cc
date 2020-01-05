@@ -65,6 +65,8 @@ Settings::Settings()
 
 #if defined(__linux__) && defined(SANDBOX_SHELL)
     sandboxPaths = tokenizeString<StringSet>("/bin/sh=" SANDBOX_SHELL);
+#elif defined(__APPLE__)
+    sandboxPaths = tokenizeString<StringSet>("/bin/sh /usr/bin/env /usr/lib /private/tmp /private/var/tmp /System/Library/Frameworks /System/Library/PrivateFrameworks");
 #endif
 
     allowedImpureHostPrefixes = tokenizeString<StringSet>(DEFAULT_ALLOWED_IMPURE_PREFIXES);
