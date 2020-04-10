@@ -3715,6 +3715,7 @@ void DerivationGoal::registerOutputs()
                 if (settings.runDiffHook || settings.keepFailed) {
                     Path dst = worker.store.toRealPath(path + checkSuffix);
                     deletePath(dst);
+                    chmod_(actualPath.c_str(), 0755);
                     if (rename(actualPath.c_str(), dst.c_str()))
                         throw SysError(format("renaming '%1%' to '%2%'") % actualPath % dst);
 
