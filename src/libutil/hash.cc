@@ -134,20 +134,14 @@ Hash::Hash(const std::string & s, HashType type)
     auto sep = s.find(':');
     if (sep == string::npos) {
         sep = s.find('-');
-        if (sep != string::npos) {
-            isSRI = true;
-        } else if (type == htUnknown)
+        if (sep != string::npos)
+            throw BadHash("hash '%s' is not backwards compatible, SRI hashes are not allowed in nixpkgs yet", s);
+        else if (type == htUnknown)
             throw BadHash("hash '%s' does not include a type", s);
     }
 
     if (sep != string::npos) {
-        string hts = string(s, 0, sep);
-        this->type = parseHashType(hts);
-        if (this->type == htUnknown)
-            throw BadHash("unknown hash type '%s'", hts);
-        if (type != htUnknown && type != this->type)
-            throw BadHash("hash '%s' should have type '%s'", s, printHashType(type));
-        pos = sep + 1;
+        throw BadHash("hash '%s' is not backwards compatible, hashes with a type are not allowed in nixpkgs yet", s);
     }
 
     init();
@@ -194,11 +188,7 @@ Hash::Hash(const std::string & s, HashType type)
     }
 
     else if (isSRI || size == base64Len()) {
-        auto d = base64Decode(std::string(s, pos));
-        if (d.size() != hashSize)
-            throw BadHash("invalid %s hash '%s'", isSRI ? "SRI" : "base-64", s);
-        assert(hashSize);
-        memcpy(hash, d.data(), hashSize);
+        throw BadHash("hash '%s' is not backwards compatible, base64 hashes are not allowed in nixpkgs yet", s);
     }
 
     else
